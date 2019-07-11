@@ -1,0 +1,19 @@
+index: indexName
+analyser: analyserClass
+fields:
+  -
+    name: f1
+    # INT,LONG,STRING,TEXT,DATE
+    type: INT
+    formatter: 时间值格式
+  -
+    name: f2
+    # INT,LONG,STRING,TEXT,DATE
+    type: STRING
+    formatter: 时间值格式
+source:
+    # LIST,HASH
+    type: LIST
+    ip: ip
+    port: port
+    name: listName

@@ -1,0 +1,92 @@
+plugins {
+    id 'java'
+}
+
+group 'yoloz'
+
+version = 1.0
+
+repositories {
+    mavenLocal()
+    maven {
+        url = 'http://repo.maven.apache.org/maven2'
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    dependencies {
+        compile 'org.apache.lucene:lucene-core:7.6.0',
+                'org.apache.lucene:lucene-queryparser:7.6.0',
+                'org.apache.lucene:lucene-analyzers-common:7.6.0',
+                'org.apache.lucene:lucene-grouping:7.6.0',
+                'log4j:log4j:1.2.17'
+        compile group: 'org.nutz', name: 'ssdb4j', version: '10.0'
+        compile group: 'org.yaml', name: 'snakeyaml', version: '1.23'
+        compile group: 'com.github.jsqlparser', name: 'jsqlparser', version: '1.4'
+        compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.25.2'
+        compile 'org.apache.commons:commons-dbcp2:2.2.0',
+                'commons-dbutils:commons-dbutils:1.7'
+        compile 'com.google.code.gson:gson:2.8.5',
+                'com.google.guava:guava:27.1-jre'
+        compile 'org.eclipse.jetty:jetty-servlet:9.4.15.v20190215',
+                'org.eclipse.jetty:jetty-server:9.4.15.v20190215'
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+    }
+}
+
+jar {
+    baseName 'searchSSDB'
+    manifest {
+        attributes 'Main-Class': 'SSServer'
+    }
+}
+
+test.enabled = false
+//gradle.taskGraph.afterTask { tsk ->
+//    if (tsk.state.noSource) {
+//        throw new GradleException("stopping build because NO_SOURCE task outcome detected for ${tsk.path}")
+//    }
+//}
+task copyJar(type: Copy) {
+    from configurations.runtime
+    from('build/libs') {
+        include('*.jar')
+    }
+    into 'build/lib'
+}
+task copyFiles(type: Copy) {
+    from(rootDir) {
+        include 'conf/', 'bin/'
+    }
+    into 'build'
+}
+//task copyConf(type: Copy) {
+//    from('conf/')
+//    into 'build/conf'
+//}
+//task copyBin(type: Copy) {
+//    from 'bin/'
+//    into 'build/bin'
+//}
+copyJar.mustRunAfter(build)
+task release(dependsOn: [build, copyJar, copyFiles]) {
+    doLast {
+        new File(buildDir.getAbsolutePath()).eachFile { f ->
+            if (f.isDirectory()) {
+                String name = f.getName()
+                if (name == "classes" || name == "tmp" || name == "libs" || name == "resources") {
+                    f.deleteDir()
+                }
+            } else if (f.isFile()) f.delete()
+        }
+    }
+}
