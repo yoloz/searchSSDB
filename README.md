@@ -161,4 +161,3 @@ curl localhost:12580/query -X POST -d "{\"sql\":\"select * from test where compa
 条件>,>=,<,<=,between限定用于date,int,long;  
 order by限定用于int,long,date,string;  
 group by限定用于int,long,date,string且只支持一组;
->>>>>>> fea_audit
