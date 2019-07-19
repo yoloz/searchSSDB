@@ -20,9 +20,8 @@ test -d ${LSDir}"/logs" || mkdir -p ${LSDir}"/logs"
 
 test -d ${LSDir}"/var" || mkdir -p ${LSDir}"/var"
 
-if [[ "x$1" = "xdaemon" ]]; then
-  shift
-  nohup ${JAVA} "-Xmx1G" "-Xms1G" "-DLSDir="${LSDir} "-DLogLevel=info" -cp ${LSDir}"/lib/*" SSServer "start" > ${LSDir}"/logs/server.out" 2>&1 < /dev/null &
+if [[ "x$1" = "x-f" ]]; then
+   exec ${JAVA} "-Xmx1G" "-Xms1G" "-DLSDir="${LSDir} "-DLogLevel=info" -cp ${LSDir}"/lib/*" SSServer "start"
 else
-  exec ${JAVA} "-Xmx1G" "-Xms1G" "-DLSDir="${LSDir} "-DLogLevel=info" -cp ${LSDir}"/lib/*" SSServer "start"
+   nohup ${JAVA} "-Xmx1G" "-Xms1G" "-DLSDir="${LSDir} "-DLogLevel=info" -cp ${LSDir}"/lib/*" SSServer "start" > ${LSDir}"/logs/server.out" 2>&1 < /dev/null &
 fi

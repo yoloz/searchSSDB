@@ -2,15 +2,14 @@ package util;
 
 import bean.LSException;
 import bean.Schema;
+import com.google.common.io.CharStreams;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -124,7 +123,7 @@ public class Utils {
     public static int stopPid(Path path) throws IOException, InterruptedException {
         String pid = Files.readAllLines(path, StandardCharsets.UTF_8).get(0);
         int exit = stopPid(pid);
-        if (exit == 0) Files.delete(path);
+        if (exit == 0) Files.deleteIfExists(path);
         return exit;
     }
 
@@ -145,6 +144,11 @@ public class Utils {
         commands.add(pid);
         process.command(commands);
         Process p = process.start();
+        try (InputStream inputStream = p.getErrorStream();
+             InputStreamReader ir = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+            String msg = CharStreams.toString(ir);
+            if (msg.contains("No such process")) return 0;
+        }
         return p.waitFor();
     }
 
