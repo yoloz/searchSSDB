@@ -18,6 +18,7 @@ public class Constants {
     public static final Path logDir;
     public static final Path varDir;
     public static final int httpPort;
+    public static final String hostName;
     public static final int totalIndex;
     public static final double RAMBuffer;
     public static final int perDayHour;
@@ -46,9 +47,10 @@ public class Constants {
             indexDir = varDir.resolve("index");
         else indexDir = Paths.get(_indexDir);
         httpPort = Integer.parseInt(properties.getProperty("httpPort"));
-        totalIndex = Integer.valueOf(properties.getProperty("totalIndex", "6"));
+        hostName = properties.getProperty("hostName", "127.0.0.1");
+        totalIndex = Integer.parseInt(properties.getProperty("totalIndex", "6"));
         RAMBuffer = Double.parseDouble(properties.getProperty("indexBuffer", "128"));
-        perDayHour = Integer.valueOf(properties.getProperty("perDayHour", "2"));
+        perDayHour = Integer.parseInt(properties.getProperty("perDayHour", "2"));
         searchExpired = Integer.parseInt(properties.getProperty("searchExpired", "0"));
     }
 }

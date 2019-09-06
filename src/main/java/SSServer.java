@@ -16,6 +16,7 @@ import util.SqlliteUtil;
 import util.Utils;
 
 import java.lang.management.ManagementFactory;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -38,7 +39,7 @@ public class SSServer {
     }
 
     private void startHttpServer() throws Exception {
-        httpServer = new Server(Constants.httpPort);
+        httpServer = new Server(new InetSocketAddress(Constants.hostName, Constants.httpPort));
         ServletHandler handler = new ServletHandler();
         httpServer.setHandler(handler);
         handler.addServletWithMapping(NewIndex.class, "/create");
