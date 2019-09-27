@@ -13,7 +13,6 @@ import org.yaml.snakeyaml.Yaml;
 import util.SqlliteUtil;
 
 import java.io.StringReader;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,7 +59,7 @@ public class CreateSql {
         Schema schema = new Schema();
         schema.setIndex(table.getTable().getName());
 
-        List<Map<String, Object>> list = SqlliteUtil
+        List<Map<String, Object>> list = SqlliteUtil.getInstance()
                 .query("select name from schema where name=?", table.getTable().getName());
         if (!list.isEmpty()) throw new LSException("index[" + table.getTable().getName() + "] is exit...");
 
@@ -102,24 +101,17 @@ public class CreateSql {
         }
         schema.setFields(fields);
 
-        Connection conn = SqlliteUtil.getConnection();
-        try {
-            conn.setAutoCommit(false);
-            String insertSql = "INSERT INTO schema(name,value)VALUES (?,?)";
-            SqlliteUtil.insert(conn, insertSql, schema.getIndex(), yaml.dump(schema));
-            Object point = null;
-            if (Source.Type.LIST == schema.getSource().getType()) point = 0;
-            else if (Source.Type.HASH == schema.getSource().getType()) point = "";
-            SqlliteUtil.insert(conn, "INSERT INTO point(iname,value)VALUES (?,?)",
-                    schema.getIndex(), point);
-            conn.commit();
-        } catch (SQLException e) {
-            conn.rollback();
-            throw e;
-        } finally {
-            conn.close();
-        }
-
+        String[] p1 = new String[2];
+        p1[0] = schema.getIndex();
+        p1[1] = yaml.dump(schema);
+        Object point = null;
+        if (Source.Type.LIST == schema.getSource().getType()) point = 0;
+        else if (Source.Type.HASH == schema.getSource().getType()) point = "";
+        Object[] p2 = new Object[2];
+        p2[0] = schema.getIndex();
+        p2[1] = point;
+        SqlliteUtil.getInstance().transaction("INSERT INTO schema(name,value)VALUES (?,?)", p1,
+                "INSERT INTO point(iname,value)VALUES (?,?)", p2);
         return schema.getIndex();
     }
 

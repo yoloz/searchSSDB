@@ -31,7 +31,7 @@ public class GetAllIndex extends HttpServlet {
         Yaml yaml = new Yaml();
         try {
             results.put("success", true);
-            List<Map<String, Object>> list = SqlliteUtil.query("select name,value from schema");
+            List<Map<String, Object>> list = SqlliteUtil.getInstance().query("select name,value from schema");
             List<Map<String, String>> indexes = new ArrayList<>(list.size());
             for (Map<String, Object> map : list) {
                 Map<String, String> index = new HashMap<>(3);

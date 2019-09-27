@@ -94,11 +94,11 @@ public class SsdbPull extends Thread {
                 logger.debug("pollOnce[" + pairs.size() + "] cost time[" + (end - start) + "] mills");
                 if (pairs.size() == 0) Thread.sleep(waitMills);
                 if (counter >= 10000) {
-                    SqlliteUtil.update("update ssdb set point=? where name=?", point, indexName);
+                    SqlliteUtil.getInstance().update("update ssdb set point=? where name=?", point, indexName);
                     counter = 0;
                 }
             }
-            SqlliteUtil.update("update ssdb set point=? where name=?", point, indexName);
+            SqlliteUtil.getInstance().update("update ssdb set point=? where name=?", point, indexName);
         } catch (LSException | SQLException e) {
             logger.warn(e.getMessage(), e);
         } catch (Exception e) {
@@ -114,7 +114,7 @@ public class SsdbPull extends Thread {
             ")";*/
     private void initPoint() throws LSException {
         try {
-            List<Object> points = SqlliteUtil.queryL(
+            List<Object> points = SqlliteUtil.getInstance().queryL(
                     "select point from ssdb where name=?", indexName);
             String _point = String.valueOf(points.get(0));
             switch (type) {

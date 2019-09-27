@@ -180,7 +180,7 @@ public class Utils {
     public static Schema getSchema(String name) throws LSException {
         List<Map<String, Object>> list;
         try {
-            list = SqlliteUtil.query("select value from schema where name=?", name);
+            list = SqlliteUtil.getInstance().query("select value from schema where name=?", name);
         } catch (SQLException e) {
             throw new LSException("取索引[" + name + "]元数据错误", e);
         }

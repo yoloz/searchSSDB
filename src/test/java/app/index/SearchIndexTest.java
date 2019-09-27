@@ -41,7 +41,7 @@ public class SearchIndexTest {
         System.setProperty("LSDir",
                 Paths.get(this.getClass().getResource("/schema_template.yaml").getPath())
                         .getParent().toString());
-        List<Map<String, Object>> list = SqlliteUtil.query("select value from schema where name=?", "test");
+        List<Map<String, Object>> list = SqlliteUtil.getInstance().query("select value from schema where name=?", "test");
         assertEquals(1, list.size());
         Yaml yaml = new Yaml();
         List<String> selects = Collections.singletonList("*");

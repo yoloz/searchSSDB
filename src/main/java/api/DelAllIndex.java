@@ -25,7 +25,6 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class DelAllIndex extends HttpServlet {
@@ -66,18 +65,8 @@ public class DelAllIndex extends HttpServlet {
                 for (Path p : stream) if (Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS)) Files.delete(p);
             }
             logger.debug("delete all db data...");
-            Connection conn = SqlliteUtil.getConnection();
-            try {
-                conn.setAutoCommit(false);
-                SqlliteUtil.update(conn, "delete from schema where name=?", indexName);
-                SqlliteUtil.update(conn, "delete from point where iname=?", indexName);
-                conn.commit();
-            } catch (SQLException e) {
-                logger.error("delete all index[" + indexName + "] error,", e);
-                conn.rollback();
-            } finally {
-                conn.close();
-            }
+            SqlliteUtil.getInstance().transaction("delete from schema where name=?", new String[]{indexName},
+                    "delete from point where iname=?", new String[]{indexName});
         } catch (Exception e) {
             logger.error("delete all index[" + indexName + "] error,", e);
             error = Utils.responseError(e.getMessage());

@@ -15,6 +15,8 @@ import org.eclipse.jetty.servlet.ServletHandler;
 import util.SqlliteUtil;
 import util.Utils;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -65,21 +67,29 @@ public class SSServer {
             System.err.printf("param %s is not defined\n%s", args[1], "USAGE:*.sh start|stop");
             System.exit(1);
         }
-        PropertyConfigurator.configure(SSServer.class.getResourceAsStream("/log4j.properties"));
+        InputStream log4j = SSServer.class.getResourceAsStream("/log4j.properties");
+        if (Files.exists(Constants.confDir.resolve("log4j.properties"), LinkOption.NOFOLLOW_LINKS)) {
+            try {
+                log4j = Files.newInputStream(Constants.confDir.resolve("log4j.properties"));
+            } catch (IOException ignored) {
+            }
+        }
+        PropertyConfigurator.configure(log4j);
         Logger logger = Logger.getLogger(SSServer.class);
         try {
+            log4j.close();
             if ("start".equals(args[0])) {
                 Path pf = Constants.varDir.resolve("pid");
                 if (!Files.notExists(pf, LinkOption.NOFOLLOW_LINKS)) throw new LSException("server pid is exit");
                 SSServer SSServer = new SSServer();
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                     try {
-                        List<Object> indexList = SqlliteUtil.queryL("select name from schema");
+                        List<Object> indexList = SqlliteUtil.getInstance().queryL("select name from schema");
                         indexList.forEach(k -> {
                             String index = String.valueOf(k);
                             if (Indexer.isRunning(index)) Indexer.stopIndex(index);
                         });
-                        SqlliteUtil.close();
+                        SqlliteUtil.getInstance().close();
                     } catch (SQLException e) {
                         logger.warn("可能有索引数据未保存丢失", e);
                     }

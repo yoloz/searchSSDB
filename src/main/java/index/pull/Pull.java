@@ -53,7 +53,7 @@ public abstract class Pull implements Runnable, Closeable {
         }
         try {
             logger.info("update [" + indexName + "] latest point message");
-            SqlliteUtil.update("update point set name=?,value=? where iname=?",
+            SqlliteUtil.getInstance().update("update point set name=?,value=? where iname=?",
                     point.getLeft(), point.getRight(), indexName);
         } catch (SQLException e) {
             logger.error(indexName + " update point error", e);

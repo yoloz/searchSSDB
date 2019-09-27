@@ -39,14 +39,14 @@ public class SsdbPullTest {
                 Paths.get(this.getClass().getResource("/schema_template.yaml").getPath())
                         .getParent().toString());
         String sql = "select point from ssdb where name=?";
-        List<Map<String, Object>> points = SqlliteUtil.query(sql, "test");
+        List<Map<String, Object>> points = SqlliteUtil.getInstance().query(sql, "test");
         assertEquals(0, points.size());
-        SqlliteUtil.update("delete from ssdb where name=?", "list");
-        SqlliteUtil.update("delete from ssdb where name=?", "hash");
-        SqlliteUtil.insert("INSERT INTO ssdb(name,point)VALUES (?,?)", "list", "2000");
-        SqlliteUtil.insert("INSERT INTO ssdb(name,point)VALUES (?,?)", "hash", "abcdeft_245");
-        assertEquals(2000, Integer.parseInt((String) SqlliteUtil.query(sql, "list").get(0).get("point")));
-        assertEquals("abcdeft_245", SqlliteUtil.query(sql, "hash").get(0).get("point"));
+        SqlliteUtil.getInstance().update("delete from ssdb where name=?", "list");
+        SqlliteUtil.getInstance().update("delete from ssdb where name=?", "hash");
+        SqlliteUtil.getInstance().update("INSERT INTO ssdb(name,point)VALUES (?,?)", "list", "2000");
+        SqlliteUtil.getInstance().update("INSERT INTO ssdb(name,point)VALUES (?,?)", "hash", "abcdeft_245");
+        assertEquals(2000, Integer.parseInt((String) SqlliteUtil.getInstance().query(sql, "list").get(0).get("point")));
+        assertEquals("abcdeft_245", SqlliteUtil.getInstance().query(sql, "hash").get(0).get("point"));
     }
 
     private void createData(Source.Type type) throws IOException {

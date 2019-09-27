@@ -103,7 +103,7 @@ public class QuerySql {
             String indexName = parseTableName(ps.getFromItem());
             List<String> selects = parseSelectItem(ps.getSelectItems());
             Pair<Integer, Integer> limit = this.parseLimit(ps.getLimit());
-            List<Map<String, Object>> list = SqlliteUtil.query("select value from schema where name=?",
+            List<Map<String, Object>> list = SqlliteUtil.getInstance().query("select value from schema where name=?",
                     indexName);
             if (list.isEmpty()) throw new LSException("索引[" + indexName + "]不存在");
             Schema schema = new Yaml().loadAs((String) list.get(0).get("value"), Schema.class);
@@ -139,7 +139,7 @@ public class QuerySql {
             String indexName = parseTableName(ps.getFromItem());
             List<String> selects = parseSelectItem(ps.getSelectItems());
             Pair<Integer, Integer> limit = this.parseLimit(ps.getLimit());
-            List<Map<String, Object>> list = SqlliteUtil.query("select value from schema where name=?",
+            List<Map<String, Object>> list = SqlliteUtil.getInstance().query("select value from schema where name=?",
                     indexName);
             if (list.isEmpty()) throw new LSException("索引[" + indexName + "]不存在");
             Schema schema = new Yaml().loadAs((String) list.get(0).get("value"), Schema.class);

@@ -35,7 +35,7 @@ public class SsdbPull extends Pull {
     @Override
     void initPoint() throws LSException {
         try {
-            List<Map<String, Object>> points = SqlliteUtil.query(
+            List<Map<String, Object>> points = SqlliteUtil.getInstance().query(
                     "select name,value from point where iname=?", indexName);
             Map<String, Object> m = points.get(0);
             if (Source.Type.LIST == source.getType())
@@ -92,7 +92,7 @@ public class SsdbPull extends Pull {
         }
         logger.info("change to [" + _pull + "] and update[" + point + "]");
         try {
-            SqlliteUtil.update("update point set name=?,value=? where iname=?",
+            SqlliteUtil.getInstance().update("update point set name=?,value=? where iname=?",
                     point.getLeft(), point.getRight(), indexName);
         } catch (SQLException e) {
             logger.error(indexName + " update point error", e);

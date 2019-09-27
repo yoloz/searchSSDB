@@ -42,7 +42,7 @@ public class SchemaTest {
         String indexName = createSql.parse();
         assertEquals("test", indexName);
         String checkSql = "select name from schema";
-        List<Map<String, Object>> result = SqlliteUtil.query(checkSql);
+        List<Map<String, Object>> result = SqlliteUtil.getInstance().query(checkSql);
         assertEquals("test", result.get(0).get("name"));
     }
 
@@ -51,8 +51,8 @@ public class SchemaTest {
         System.setProperty("LSDir",
                 Paths.get(this.getClass().getResource("/schema_template.yaml").getPath())
                         .getParent().toString());
-        SqlliteUtil.update("delete from schema where name='test'");
-        SqlliteUtil.update("delete from point where iname='test'");
+        SqlliteUtil.getInstance().update("delete from schema where name='test'");
+        SqlliteUtil.getInstance().update("delete from point where iname='test'");
         String sql = "CREATE TABLE test" +
                 "(index int,city string,company text,time date('uuuu-MM-dd'T'HH:mm:ss.SSSSSS'),timestamp long)" +
                 " name='list*' addr='127.0.0.1:8888' type=list";
@@ -60,7 +60,7 @@ public class SchemaTest {
         String indexName = createSql.store();
         assertEquals("test", indexName);
         String checkSql = "select value from schema where name='test'";
-        List<Map<String, Object>> result = SqlliteUtil.query(checkSql);
+        List<Map<String, Object>> result = SqlliteUtil.getInstance().query(checkSql);
         System.out.println(result.get(0).get("value"));
     }
 
